@@ -15,7 +15,7 @@
 
 <h3>Objective</h3>
 
-    Integrate GitLeaks into our pipeline to check if our code exposes passwords, tokens and any other credentials
+    Integrate practices into our pipeline to check if our code exposes passwords, tokens, scans application for vulnerabilities such as SQL Injections, XSS Scripting etc
 
 <h3>Code</h3>
 
@@ -74,13 +74,46 @@
             
         ## This is set to true because we don't want the job to end.
         allow_failure: true
+        
+
+    ##This stage allows us to scan the code itsel for vulberabilities using SAST tools such as njsscan for cross-site scripting, SQL injection, phising attacks, DDos attack
+    njsscan:
+    stage: test
+    image: python
+    before_script:
+        - pip3 install --upgrade njsscan
+        ## The --exit-warning fails the build 
+    script:
+        - njsscan --exit-warning . --sarif -o njsscan.sarif
+    allow_failure: true
+    artifacts:
+        when: always
+        paths:
+            - njsscan.sarif
+        
+
+
+
+    ##Why another SAST tool? It is because we need to use multiple tools for wider code coverage and certain tools can unearth certain vulnerabilities better than  the other
+    semgrep:
+        stage: test
+        image: returntocorp/semgrep
+        ## This basically tell to scan java code
+        variables:
+            SEMGREP_RULES: p/javascript
+        script:
+            - semgrep ci --json --output semgrep.json
+        allow_failure: true
+        artifacts:
+            when: always
+            paths:
+                - semgrep.json
+
     
       
 
 
-
-
-<h3>Findings</h3>
+<h3>Findings from Gitleaks</h3>
 
       Finding:     password: 'bW9jLmxpYW1nQGhjaW5pbW1pay5ucmVvamI='
       Secret:      bW9jLmxpYW1nQGhjaW5pbW1pay5ucmVvamI=
@@ -152,7 +185,7 @@ The findings from the Gitleaks scan highlight critical security vulnerabilities 
 
 <h3>Objective</h3>
 
-    Integrate GitLeaks into our pipeline to check if our code exposes passwords, tokens and any other credentials
+    Analyze 
 
 <h3>Code</h3>
 
