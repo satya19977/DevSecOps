@@ -76,42 +76,7 @@
         allow_failure: true
         
 
-    ##This stage allows us to scan the code itsel for vulberabilities using SAST tools such as njsscan for cross-site scripting, SQL injection, phising attacks, DDos attack
-    njsscan:
-    stage: test
-    image: python
-    before_script:
-        - pip3 install --upgrade njsscan
-        ## The --exit-warning fails the build 
-    script:
-        - njsscan --exit-warning . --sarif -o njsscan.sarif
-    allow_failure: true
-    artifacts:
-        when: always
-        paths:
-            - njsscan.sarif
-        
-
-
-
-    ##Why another SAST tool? It is because we need to use multiple tools for wider code coverage and certain tools can unearth certain vulnerabilities better than  the other
-    semgrep:
-        stage: test
-        image: returntocorp/semgrep
-        ## This basically tell to scan java code
-        variables:
-            SEMGREP_RULES: p/javascript
-        script:
-            - semgrep ci --json --output semgrep.json
-        allow_failure: true
-        artifacts:
-            when: always
-            paths:
-                - semgrep.json
-
     
-      
-
 
 <h3>Findings from Gitleaks</h3>
 
@@ -190,58 +155,8 @@ The findings from the Gitleaks scan highlight critical security vulnerabilities 
 
 <h3>Code</h3>
 
-         
-       stages:
-      - cache
-      - test
-      - build
-      
+           
     
-    create_cache:
-      image: node:18-bullseye
-      stage: cache
-      script:
-        - yarn install
-      cache:
-        key:
-          files:
-            - yarn.lock
-        paths:
-          - node_modules/
-          - yarn.lock
-          - .yarn
-        policy: pull-push
-        
-    
-    yarn_test:
-      image: node:18-bullseye
-      stage: test
-      script:
-        - yarn install
-        - yarn test
-      cache:
-        key:
-          files:
-            - yarn.lock
-        paths:
-          - node_modules/
-          - yarn.lock
-          - .yarn
-        policy: pull
-
-    
-    gitleaks:
-      stage: test
-      image:
-        name: zricethezav/gitleaks
-        entrypoint: [""]
-      script:
-        - gitleaks detect --verbose --source . -f json -r gitleaks.json
-      allow_failure: true
-      artifacts:
-        when: always
-        paths:
-          - gitleaks.json
           
     
     njsscan:
