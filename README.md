@@ -488,9 +488,7 @@ grunt.registerTask('checksum', 'Create .sha256 checksum files', function () {
 ```
 
 
-### Conclusion
 
-The findings from the Gitleaks scan highlight critical security vulnerabilities related to hardcoded secrets and tokens in the application code. To enhance the security posture of the application, it is essential to remove these hardcoded secrets and implement secure storage and management practices.
 
 </details>
 
