@@ -1,4 +1,4 @@
-# DevSecOps
+# DevSecOps (Work in Progress)
 ## This is an end-to-end implementation of security practices across the Application(OWASP Juice Shop), Infrastructure (AWS) and Platform (Kubernetes)
 
 <details>
